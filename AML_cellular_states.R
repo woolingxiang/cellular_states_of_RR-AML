@@ -83,34 +83,6 @@ saveRDS(integrated,file='/public/workspace/AML_Leukemia/AML_HC.integrated.rds')
 
 
 
-###==================================================================================
-### Identification of cell types based on well-known markers
-options(stringsAsFactors = F)
-source('~/R/functions.R')
-source('~/R/requiredPcg.R')
-dat = readRDS('/public/workspace/AML_Leukemia/AML_HC.integrated.rds')
-newids = c(paste0(c(46,58,36,84,29,57,77,35,20,45),':HSC'),
-		   paste0(c(43,41,55,93,7,12,15,39,68),':CMP'),
-		   paste0(c(56,73),':MEP'),
-		   paste0(c(94,64),':pDC'),'67:cDC','74:cDC',
-		   paste0(c(48,6,80,89,76,90,60),':B'),'54:proB',
-		   paste0(c(31,53,47,49,86),':GMP'),
-		   paste0(c(59,40,65,16,92,72,5,96,14,88,61,18,33,78,97),':Mono1'),
-		   paste0(c(21,95),':Mono2'),
-		   paste0(c(34,82,23),':Neutrophil'),
-		   paste0(c(83,11,25,81),':NK'),
-		   paste0(c(10,17,8,4,19,1,3),':CD8+ T'),
-		   paste0(c(38,0,9,87,2,30,50,37),':CD4+ T'),
-		   paste0(c(44,79,75,42,66,51,63,52,28,70,32,69,26,62,71,13,24,22,27,85,91),':Ery'))
-id = gsub(':.*','',newids)
-newids = c(newids,paste0(setdiff(levels(dat),id),':Unknown'))
-newids = data.frame(newids = newids, cluster = as.character(gsub(':.*','',newids)))
-newids = newids[order(newids$newids),]
-
-dat$seuratType = unlist(apply(data.frame(dat$seurat_clusters),1,function(x){newids$newids[which(newids$cluster==x)]}))
-dat$CellType = gsub('.*:','',dat$seuratType)
-
-saveRDS(dat, file = '/public/workspace/AML_Leukemia/AML_HC.integrated.rds')
 
 
 
